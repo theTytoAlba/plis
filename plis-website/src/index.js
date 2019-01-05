@@ -4,7 +4,7 @@ import './index.css';
 
 /**
  * Renders a radiobutton with a text after it.
- * Pings the creator back with its onChange function.
+ * If user clicks on it while unselected, notifies parent.
  */
 class RadioButton extends React.Component {
     constructor(props) {
@@ -14,10 +14,18 @@ class RadioButton extends React.Component {
         };
     }
 
+    onClick(event) {
+        // If this button is not already selected, notify parent.
+        if (!this.state.selected) {
+            this.props.onSelect(this.props.name);
+        }
+    }
+
     render() {
         return (
             <div className="horizontal-flex">
-                <input type="radio" checked={this.props.isSelected}/> <p>{this.props.name}</p>
+                <input type="radio" checked={this.props.isSelected} onClick={this.onClick.bind(this)}/> 
+                <p>{this.props.name}</p>
             </div>
         );
     }
@@ -38,6 +46,10 @@ class FullscreenSearch extends React.Component {
         };
     }
 
+    handleQueryTypeButtonClick(selectedButtonName) {
+        console.log(selectedButtonName);       
+    }
+
     render() {
         return (
             <div className="vertical-flex match-parent">
@@ -45,8 +57,8 @@ class FullscreenSearch extends React.Component {
                 <p>Protein Ligand Interaction Search</p>
                 <input type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
-                    <RadioButton isSelected={this.state.queryType === "Protein"} name="Protein"/>
-                    <RadioButton isSelected={this.state.queryType === "Ligand"} name="Ligand"/>
+                    <RadioButton isSelected={this.state.queryType === "Protein"} name="Protein" onSelect={this.handleQueryTypeButtonClick.bind(this)}/>
+                    <RadioButton isSelected={this.state.queryType === "Ligand"} name="Ligand" onSelect={this.handleQueryTypeButtonClick.bind(this)}/>
                 </div>
             </div>
         );
