@@ -3,6 +3,27 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 /**
+ * Renders a radiobutton with a text after it.
+ * Pings the creator back with its onChange function.
+ */
+class RadioButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            selected: props.isSelected,
+        };
+    }
+
+    render() {
+        return (
+            <div className="horizontal-flex">
+                <input type="radio" checked={this.props.isSelected}/> <p>{this.props.name}</p>
+            </div>
+        );
+    }
+}
+
+/**
  * The fullscreen search mode, the initial page of the website.
  * Has the logo, title of product, search bar and protein/ligand selection.
  * Pings the Plis component back if query is updated.
@@ -15,8 +36,8 @@ class FullscreenSearch extends React.Component {
                 <p>Protein Ligand Interaction Search</p>
                 <input type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
-                    <div>Protein button</div>
-                    <div>Ligand button</div>
+                    <RadioButton isSelected={true} name="Protein"/>
+                    <RadioButton isSelected={false} name="Ligand"/>
                 </div>
             </div>
         );
