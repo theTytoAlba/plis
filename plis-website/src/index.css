@@ -58,6 +58,10 @@ p {
   width: 50%;
 }
 
+.results-search-bar-width {
+  width: 500px;
+}
+
 .search-bar {
   font-size: 15px;  
   margin: 10px;
@@ -85,6 +89,7 @@ p {
   display: flex;
   flex-direction: column;
   padding: 20px 100px;
+  box-sizing: border-box;
 }
 
 .results-logo-and-title-container {
@@ -95,4 +100,8 @@ p {
 .results-logo-and-title-container p {
   margin: 10px;
   font-size: 20px;
+}
+
+.results-search-and-types-container {
+  display: flex;
 }

@@ -14,7 +14,10 @@ class ResultsScreen extends React.Component {
             <div className="results-container">
                 <div className="results-logo-and-title-container">
                     <img width="50px" height="50px" src="/boun_logo.png" alt=""/>
-                    <p>Proteion Ligand Interaction Search</p>
+                    <p>Protein Ligand Interaction Search</p>
+                </div>
+                <div className="results-search-and-types-container">
+                    <SearchBar />
                 </div>
             </div>
         );
@@ -41,7 +44,7 @@ class SearchBar extends React.Component {
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit.bind(this)} className={`${this.props.fullscreenMode ? "fullscreen-search-bar-width" : ""}`}>
+            <form onSubmit={this.handleSubmit.bind(this)} className={`${this.props.fullscreenMode ? "fullscreen-search-bar-width" : "results-search-bar-width"}`}>
                 <input 
                     className="search-bar"
                     type="text" 
