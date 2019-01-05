@@ -3,6 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 /**
+ * The results page contains:
+ *  Search bar and query type
+ *  Result of the query term
+ *  List of interactions
+ */
+class ResultsScreen extends React.Component {
+    render() {
+        return (
+            <div>
+                Results
+            </div>
+        );
+    }
+}
+
+/**
  * Renders a search bar.
  * When user hits enter, types query is sent back to parent.
  */
@@ -139,9 +155,7 @@ class Plis extends React.Component {
         } else {
             // Query there is a query, go for results page.
             return (
-                <div>
-                    results search
-                </div>
+                <ResultsScreen />
             );
 
         }
