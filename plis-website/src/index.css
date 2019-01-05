@@ -112,3 +112,7 @@ p {
 .linear-progress-bar {
   margin: 10px 0;
 }
+
+.hidden {
+  display: none;
+}

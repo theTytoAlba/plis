@@ -10,6 +10,22 @@ import LinearProgress from '@material-ui/core/LinearProgress';
  *  List of interactions
  */
 class ResultsScreen extends React.Component {
+    onResultsReady(json) {
+        this.setState({resultsReceived: true, results: json});
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            resultsReceived: false
+        };
+
+        // Fetch the results.
+        fetch('/getSearchData.json')
+            .then(response => response.json())
+            .then(json => this.onResultsReady(json));
+    }
+
     render() {
         return (
             <div className="results-container">
@@ -28,7 +44,7 @@ class ResultsScreen extends React.Component {
                         name="Ligand" 
                     />
                 </div>
-                <LinearProgress className="linear-progress-bar"/>
+                <LinearProgress className={`linear-progress-bar ${this.state.resultsReceived ? "hidden" : ""}`}/>
             </div>
         );
     }
