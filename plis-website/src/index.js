@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 /**
  * The results page contains:
@@ -27,6 +28,7 @@ class ResultsScreen extends React.Component {
                         name="Ligand" 
                     />
                 </div>
+                <LinearProgress className="linear-progress-bar"/>
             </div>
         );
     }

@@ -106,4 +106,9 @@ p {
 
 .results-search-and-types-container {
   display: flex;
+  align-items: center;
+}
+
+.linear-progress-bar {
+  margin: 10px 0;
 }
