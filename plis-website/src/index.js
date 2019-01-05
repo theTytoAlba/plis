@@ -2,6 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+class SearchBar extends React.Component {
+    handleChange(e) {
+        this.setState({query: e.target.value});
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        console.log(this.state.query);
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit.bind(this)} className={`${this.props.fullscreenMode ? "fullscreen-search-bar-width" : ""}`}>
+                <input 
+                    className="search-bar"
+                    type="text" 
+                    placeholder="Your query"
+                    onChange={this.handleChange.bind(this)}
+                />
+            </form>
+        );
+    }
+}
+
 /**
  * Renders a radiobutton with a text after it.
  * If user clicks on it while unselected, notifies parent.
@@ -53,7 +77,7 @@ class FullscreenSearch extends React.Component {
             <div className="vertical-flex match-parent">
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p className="project-title">Protein Ligand Interaction Search</p>
-                <input className="search-bar" type="text" placeholder="Your query" />
+                <SearchBar fullscreenMode={true} />
                 <div className="query-type-buttons-container">
                     <RadioButton 
                         isSelected={this.state.queryType === "Protein"} 
