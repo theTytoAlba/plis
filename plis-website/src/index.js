@@ -16,7 +16,7 @@ class RadioButton extends React.Component {
 
     render() {
         return (
-            <div className="horizontal-flex">
+            <div className="horizontal-flex radio-button">
                 <input type="radio" checked={this.props.isSelected} onClick={this.onClick.bind(this)}/> 
                 <p>{this.props.name}</p>
             </div>
@@ -53,7 +53,7 @@ class FullscreenSearch extends React.Component {
             <div className="vertical-flex match-parent">
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p className="project-title">Protein Ligand Interaction Search</p>
-                <input type="text" placeholder="Your query" />
+                <input className="search-bar" type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
                     <RadioButton 
                         isSelected={this.state.queryType === "Protein"} 

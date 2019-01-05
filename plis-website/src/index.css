@@ -18,6 +18,12 @@ code {
     monospace;
 }
 
+/* Reset default values for paragraphs */
+p {
+  margin: 0;
+  padding: 0;
+}
+
 /* Orders items vertically and centers them. */
 .vertical-flex {
   display: flex;
@@ -34,6 +40,24 @@ code {
 }
 
 .project-title {
-  font-size: 35px;
+  font-size: 30px;
   font-family: Heebo;
+  margin: 15px;
+}
+
+.radio-button {
+  margin: 20px;
+}
+
+.search-bar {
+  font-size: 15px;  
+  margin: 10px;
+  border-radius: 10px;
+  padding: 5px;
+  max-width: 700px;
+  width: 50%;
+}
+
+.search-bar:focus {
+  outline: none;
 }
