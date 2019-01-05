@@ -124,8 +124,8 @@ class Plis extends React.Component {
         };
     }
 
-    handleQuery(e) {
-        console.log(e);
+    handleQuery(queryInfo) {
+        this.setState(queryInfo);
     }
 
     render() {
