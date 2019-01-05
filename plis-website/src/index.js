@@ -21,7 +21,10 @@ class ResultsScreen extends React.Component {
         };
 
         // Fetch the results.
-        fetch('/getSearchData.json')
+        fetch("http://localhost:60015", {
+            method: "POST",
+            body: JSON.stringify({iam: "here"})
+         })
             .then(response => response.json())
             .then(json => this.onResultsReady(json));
     }
