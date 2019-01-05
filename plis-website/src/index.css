@@ -60,6 +60,7 @@ p {
 
 .results-search-bar-width {
   width: 500px;
+  padding-right: 50px;
 }
 
 .search-bar {
@@ -95,6 +96,7 @@ p {
 .results-logo-and-title-container {
   display: flex;
   align-items: center;
+  margin: 10px;
 }
 
 .results-logo-and-title-container p {

@@ -18,6 +18,14 @@ class ResultsScreen extends React.Component {
                 </div>
                 <div className="results-search-and-types-container">
                     <SearchBar query={this.props.query}/>
+                    <RadioButton 
+                        isSelected={this.props.queryType === "Protein"} 
+                        name="Protein" 
+                    />
+                    <RadioButton 
+                        isSelected={this.props.queryType === "Ligand"} 
+                        name="Ligand" 
+                    />
                 </div>
             </div>
         );
@@ -149,9 +157,10 @@ class FullscreenSearch extends React.Component {
 class Plis extends React.Component {
     constructor(props) {
         super(props);
-        // Initially the query is empty.
+        // Initially the query is empty and of type protein.
         this.state = {
             query: "",
+            queryType: "Protein"
         };
     }
 
@@ -170,9 +179,8 @@ class Plis extends React.Component {
         } else {
             // Query there is a query, go for results page.
             return (
-                <ResultsScreen query={currentQuery}/>
+                <ResultsScreen query={currentQuery} queryType={this.state.queryType}/>
             );
-
         }
     }
 }
