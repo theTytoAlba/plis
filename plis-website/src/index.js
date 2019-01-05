@@ -29,6 +29,15 @@ class RadioButton extends React.Component {
  * Pings the Plis component back if query is updated.
  */
 class FullscreenSearch extends React.Component {
+    constructor(props) {
+        super(props);
+        // Initially the query is of protein type and empty.
+        this.state = {
+            query: "",
+            queryType: "Protein",
+        };
+    }
+
     render() {
         return (
             <div className="vertical-flex match-parent">
@@ -36,8 +45,8 @@ class FullscreenSearch extends React.Component {
                 <p>Protein Ligand Interaction Search</p>
                 <input type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
-                    <RadioButton isSelected={true} name="Protein"/>
-                    <RadioButton isSelected={false} name="Ligand"/>
+                    <RadioButton isSelected={this.state.queryType === "Protein"} name="Protein"/>
+                    <RadioButton isSelected={this.state.queryType === "Ligand"} name="Ligand"/>
                 </div>
             </div>
         );
