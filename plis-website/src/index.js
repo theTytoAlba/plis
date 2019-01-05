@@ -54,7 +54,7 @@ class FullscreenSearch extends React.Component {
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p className="project-title">Protein Ligand Interaction Search</p>
                 <input className="search-bar" type="text" placeholder="Your query" />
-                <div className="horizontal-flex">
+                <div className="query-type-buttons-container">
                     <RadioButton 
                         isSelected={this.state.queryType === "Protein"} 
                         name="Protein" 

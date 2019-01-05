@@ -32,13 +32,6 @@ p {
   align-items: center;
 }
 
-/* Orders items horizontally and centers them. */
-.horizontal-flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .project-title {
   font-size: 30px;
   font-family: Heebo;
@@ -46,7 +39,16 @@ p {
 }
 
 .radio-button {
-  margin: 20px;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.radio-button p {
+  margin: 0 5px;
+  font-size: 18px;
 }
 
 .search-bar {
@@ -60,4 +62,12 @@ p {
 
 .search-bar:focus {
   outline: none;
+}
+
+.query-type-buttons-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 700px;
+  width: 50%;
 }
