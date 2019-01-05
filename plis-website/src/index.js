@@ -2,20 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+/**
+ * The fullscreen search mode, the initial page of the website.
+ * Has the logo, title of product, search bar and protein/ligand selection.
+ * Pings the Plis component back if query is updated.
+ */
 class FullscreenSearch extends React.Component {
     render() {
         return (
-            <div className="vertical-flex">
-                <img width="200px" height="200px" src="/boun_logo.png" alt=""/>
+            <div className="vertical-flex match-parent">
+                <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p>Protein Ligand Interaction Search</p>
+                <input type="text" placeholder="Your query" />
+                <div className="horizontal-flex">
+                    <div>Protein button</div>
+                    <div>Ligand button</div>
+                </div>
             </div>
-        );    
+        );
     }
 }
 
 /**
  * Holds the query in its state.
- * Decides between fulscreen design and results design.
+ * Decides between fullscreen design and results design.
  */
 class Plis extends React.Component {
     constructor(props) {
@@ -41,7 +51,7 @@ class Plis extends React.Component {
                     results search
                 </div>
             );
-    
+
         }
     }
 }
