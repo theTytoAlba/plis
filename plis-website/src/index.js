@@ -7,16 +7,9 @@ import './index.css';
  * If user clicks on it while unselected, notifies parent.
  */
 class RadioButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selected: props.isSelected,
-        };
-    }
-
-    onClick(event) {
+    onClick() {
         // If this button is not already selected, notify parent.
-        if (!this.state.selected) {
+        if (!this.props.isSelected) { 
             this.props.onSelect(this.props.name);
         }
     }
@@ -46,8 +39,13 @@ class FullscreenSearch extends React.Component {
         };
     }
 
+    /**
+     * Is called by Protein button or Ligand button.
+     * Only called if an unselected button is clicked.
+     * Updates state.
+     */
     handleQueryTypeButtonClick(selectedButtonName) {
-        console.log(selectedButtonName);       
+        this.setState({queryType: selectedButtonName});
     }
 
     render() {
@@ -57,8 +55,16 @@ class FullscreenSearch extends React.Component {
                 <p>Protein Ligand Interaction Search</p>
                 <input type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
-                    <RadioButton isSelected={this.state.queryType === "Protein"} name="Protein" onSelect={this.handleQueryTypeButtonClick.bind(this)}/>
-                    <RadioButton isSelected={this.state.queryType === "Ligand"} name="Ligand" onSelect={this.handleQueryTypeButtonClick.bind(this)}/>
+                    <RadioButton 
+                        isSelected={this.state.queryType === "Protein"} 
+                        name="Protein" 
+                        onSelect={this.handleQueryTypeButtonClick.bind(this)}
+                    />
+                    <RadioButton 
+                        isSelected={this.state.queryType === "Ligand"} 
+                        name="Ligand" 
+                        onSelect={this.handleQueryTypeButtonClick.bind(this)}
+                    />
                 </div>
             </div>
         );
