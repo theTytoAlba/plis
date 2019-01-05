@@ -2,14 +2,22 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+/**
+ * Renders a search bar.
+ * When user hits enter, types query is sent back to parent.
+ */
 class SearchBar extends React.Component {
+    // Called when user makes a change in query.
     handleChange(e) {
         this.setState({query: e.target.value});
     }
 
+    // Called when user hits enter. notifies parent with query.
     handleSubmit(e) {
+        // Prevent reloading.
         e.preventDefault();
-        console.log(this.state.query);
+        // Let parent know about new query.
+        this.props.onQuery(this.state.query);
     }
 
     render() {
@@ -64,6 +72,14 @@ class FullscreenSearch extends React.Component {
     }
 
     /**
+     * Called by search bar.
+     * Notifies parent with new query and query type. 
+     */
+    handleQuery(newQuery) {
+        this.props.onQueryReady({query: newQuery, queryType: this.state.queryType});
+    }
+
+    /**
      * Is called by Protein button or Ligand button.
      * Only called if an unselected button is clicked.
      * Updates state.
@@ -77,7 +93,7 @@ class FullscreenSearch extends React.Component {
             <div className="vertical-flex match-parent">
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p className="project-title">Protein Ligand Interaction Search</p>
-                <SearchBar fullscreenMode={true} />
+                <SearchBar fullscreenMode={true} onQuery={this.handleQuery.bind(this)}/>
                 <div className="query-type-buttons-container">
                     <RadioButton 
                         isSelected={this.state.queryType === "Protein"} 
@@ -108,13 +124,17 @@ class Plis extends React.Component {
         };
     }
 
+    handleQuery(e) {
+        console.log(e);
+    }
+
     render() {
         let currentQuery = this.state.query.trim();
         // If current query is empty, show the fullscreen search.
         if (currentQuery === "") {
             // Query is empty. Go for the fullscreen design.
             return (
-                <FullscreenSearch />
+                <FullscreenSearch onQueryReady={this.handleQuery.bind(this)} />
             );
         } else {
             // Query there is a query, go for results page.
