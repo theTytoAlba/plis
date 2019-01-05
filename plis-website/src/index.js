@@ -52,7 +52,7 @@ class FullscreenSearch extends React.Component {
         return (
             <div className="vertical-flex match-parent">
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
-                <p>Protein Ligand Interaction Search</p>
+                <p className="project-title">Protein Ligand Interaction Search</p>
                 <input type="text" placeholder="Your query" />
                 <div className="horizontal-flex">
                     <RadioButton 
