@@ -17,7 +17,7 @@ class ResultsScreen extends React.Component {
                     <p>Protein Ligand Interaction Search</p>
                 </div>
                 <div className="results-search-and-types-container">
-                    <SearchBar />
+                    <SearchBar query={this.props.query}/>
                 </div>
             </div>
         );
@@ -29,6 +29,14 @@ class ResultsScreen extends React.Component {
  * When user hits enter, types query is sent back to parent.
  */
 class SearchBar extends React.Component {
+    constructor(props) {
+        super(props);
+        // Value of query may be given, otherwise make it empty string.
+        this.state = {
+            query: this.props.query || ""
+        };
+    }
+
     // Called when user makes a change in query.
     handleChange(e) {
         this.setState({query: e.target.value});
@@ -45,7 +53,8 @@ class SearchBar extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit.bind(this)} className={`${this.props.fullscreenMode ? "fullscreen-search-bar-width" : "results-search-bar-width"}`}>
-                <input 
+                <input
+                    value={this.state.query}
                     className="search-bar"
                     type="text" 
                     placeholder="Your query"
@@ -161,7 +170,7 @@ class Plis extends React.Component {
         } else {
             // Query there is a query, go for results page.
             return (
-                <ResultsScreen />
+                <ResultsScreen query={currentQuery}/>
             );
 
         }
