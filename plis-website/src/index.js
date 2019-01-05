@@ -11,8 +11,11 @@ import './index.css';
 class ResultsScreen extends React.Component {
     render() {
         return (
-            <div>
-                Results
+            <div className="results-container">
+                <div className="results-logo-and-title-container">
+                    <img width="50px" height="50px" src="/boun_logo.png" alt=""/>
+                    <p>Proteion Ligand Interaction Search</p>
+                </div>
             </div>
         );
     }
@@ -106,7 +109,7 @@ class FullscreenSearch extends React.Component {
 
     render() {
         return (
-            <div className="vertical-flex match-parent">
+            <div className="fullscreen-search-container">
                 <img width="200px" height="200px" src="/boun_logo.png" alt="" />
                 <p className="project-title">Protein Ligand Interaction Search</p>
                 <SearchBar fullscreenMode={true} onQuery={this.handleQuery.bind(this)}/>
