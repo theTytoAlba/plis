@@ -3,12 +3,30 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Search extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            query: "",
+        };
+    }
+
     render() {
-      return (
-        <div>
-            Search here
-        </div>
-      );
+        let currentQuery = this.state.query.trim();
+        // If current query is empty, show the fullscreen search.
+        if (currentQuery === "") {
+            return (
+                <div>
+                    fullscreen search
+                </div>
+            );    
+        } else {
+            return (
+                <div>
+                    results search
+                </div>
+            );
+    
+        }
     }
 }
 
