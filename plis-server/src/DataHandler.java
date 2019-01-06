@@ -355,6 +355,7 @@ public class DataHandler {
     }
 
     public static JSONArray getInteractions(String id) {
+        System.out.println("Interactions has it? " + kibaInteractions.has(id));
         return kibaInteractions.getJSONArray(id);
     }
 }

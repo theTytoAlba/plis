@@ -1,6 +1,7 @@
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -41,6 +42,21 @@ public class ConnectionHandler implements HttpHandler {
         } else {
             result.put("result", DataHandler.getLigand(request.getString("query")));
         }
+
+        JSONArray resultInteractions = new JSONArray();
+        // Add the interaction info.
+        JSONArray interactions = DataHandler.getInteractions(request.getString("query"));
+        for (int i = 0; i < interactions.length(); i++) {
+            JSONObject interactionObject = new JSONObject();
+            // If query is protein, interactions will be ligands.
+            if (request.getString("queryType").equals("Protein")) {
+                interactionObject.put(interactions.get(i).toString(), DataHandler.getLigand(interactions.get(i).toString()));
+            } else {
+                interactionObject.put(interactions.get(i).toString(), DataHandler.getProtein(interactions.get(i).toString()));
+            }
+            resultInteractions.put(interactionObject);
+        }
+        result.put("interactions", resultInteractions);
         return result.toString();
     }
 }
