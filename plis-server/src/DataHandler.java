@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
@@ -8,7 +9,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class DataHandler {
-    private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons;
+    private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons, kibaInteractions;
     private static String kibaAffinities[][];
 
     /**
@@ -19,6 +20,7 @@ public class DataHandler {
         importLigands();
         importProteins();
         importAffinities();
+        importOrCreateInteractions();
     }
 
     private static void importLigands() {
@@ -70,6 +72,65 @@ public class DataHandler {
             }
         }
         System.out.println("Imported " + kibaAffinities.length * kibaAffinities[0].length + " kibaAffinities from core dataset.");
+    }
+
+    private static void importOrCreateInteractions() {
+        File interactionsFile = new File("files/kiba/kibaInteractions.txt");
+        if (interactionsFile.exists()) {
+            importInteractions();
+        } else {
+            createInteractions();
+            saveInteractions();
+        }
+    }
+
+    private static void importInteractions() {
+        System.out.println("Reading the interaction database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/kiba/kibaInteractions.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String interactionsDB = in.nextLine();
+        kibaInteractions = new JSONObject(interactionsDB);
+
+        System.out.println("Imported " + kibaInteractions.keySet().size() + " interaction lists from core dataset.");
+    }
+
+    private static void createInteractions() {
+        kibaInteractions = new JSONObject();
+        for (int ligandIndex = 0; ligandIndex < kibaLigands.keySet().size(); ligandIndex++) {
+            for (int proteinIndex = 0; proteinIndex < kibaProteins.keySet().size(); proteinIndex++) {
+                String affinity = kibaAffinities[ligandIndex][proteinIndex];
+                if (!affinity.equals("nan")) {
+                    String ligand = kibaLigands.keySet().toArray()[ligandIndex].toString();
+                    String protein = kibaProteins.keySet().toArray()[proteinIndex].toString();
+
+                    if (!kibaInteractions.has(ligand)) {
+                        kibaInteractions.put(ligand, new JSONArray());
+                    }
+                    kibaInteractions.put(ligand, kibaInteractions.getJSONArray(ligand).put(protein));
+
+
+                    if (!kibaInteractions.has(protein)) {
+                        kibaInteractions.put(protein, new JSONArray());
+                    }
+                    kibaInteractions.put(protein, kibaInteractions.getJSONArray(protein).put(ligand));
+                }
+            }
+        }
+    }
+
+    private static void saveInteractions() {
+        System.out.println("Saving interactions");
+        try (FileWriter file = new FileWriter("files/kiba/kibaInteractions.txt")) {
+            file.write(kibaInteractions.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     public static void prepareCoreDatasetDetails() {
