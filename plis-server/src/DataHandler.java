@@ -353,4 +353,8 @@ public class DataHandler {
     public static JSONObject getLigand(String ligandId) {
         return ligandJsons.getJSONObject(ligandId);
     }
+
+    public static JSONArray getInteractions(String id) {
+        return kibaInteractions.getJSONArray(id);
+    }
 }
