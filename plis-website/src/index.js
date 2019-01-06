@@ -22,7 +22,10 @@ class ResultsScreen extends React.Component {
 
         fetch("http://localhost:60015", {
             method: "POST",
-            body: JSON.stringify({iam: "here"})
+            body: JSON.stringify({
+                query: this.props.query,
+                queryType: this.props.queryType
+            })
          })
             .then(response => response.json())
             .then(json => console.log(json));
