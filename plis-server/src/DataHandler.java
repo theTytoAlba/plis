@@ -1,11 +1,13 @@
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Scanner;
 
 public class DataHandler {
-    static JSONObject kibaLigands, kibaProteins;
+    static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons;
+    ;
     static String kibaAffinities[][];
 
     /**
@@ -101,30 +103,105 @@ public class DataHandler {
     }
 
     private static void importLigandDetails() {
-        // TODO: Implement
+        System.out.println("Reading the ligand details database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/kiba/ligandJsons.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String ligandsDB = in.nextLine();
+        ligandJsons = new JSONObject(ligandsDB);
+
+        System.out.println("Imported " + ligandJsons.keySet().size() + " ligand details from core dataset.");
     }
+
     private static void fetchJsonDataForLigands() {
-        // TODO: Implement
+        int i = 0;
+        ligandJsons = new JSONObject("{}");
+        for (String ligand : kibaLigands.keySet()) {
+            i++;
+            System.out.println("Starting for " + ligand);
+            JSONObject json = requestLigandJsonByChemblId(ligand);
+            ligandJsons.put(ligand, json);
+            System.out.println("Finished " + i + "/" + kibaLigands.keySet().size());
+        }
     }
+
     private static void saveLigandJsons() {
-        // TODO: Implement
+        System.out.println("Saving fetched data");
+        try (FileWriter file = new FileWriter("files/kiba/ligandJsons.txt")) {
+            file.write(ligandJsons.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
+
     private static void importProteinXmlDetails() {
         // TODO: Implement
     }
+
     private static void fetchXmlDataForProteins() {
         // TODO: Implement
     }
+
     private static void saveProteinXmls() {
         // TODO: Implement
     }
+
     private static void importProteinDetails() {
         // TODO: Implement
     }
+
     private static void convertProteinXmlsToJson() {
         // TODO: Implement
     }
+
     private static void saveProteinJsons() {
         // TODO: Implement
+    }
+
+    private static JSONObject requestLigandJsonByChemblId(String chemblId) {
+        try {
+            URL pubchemUrl = new URL("https://pubchem.ncbi.nlm.nih.gov/compound/" + chemblId);
+            URLConnection connection = pubchemUrl.openConnection();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            connection.getInputStream()));
+            String inputLine;
+            String pubchemIdLink = "";
+
+            while ((inputLine = in.readLine()) != null) {
+                if (inputLine.contains("og:url")) {
+                    pubchemIdLink = inputLine.split("\"")[3];
+                }
+            }
+            in.close();
+
+            String pubchemId = pubchemIdLink.split("/")[4];
+
+            URL jsonUrl = new URL("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + pubchemId + "/JSON/");
+            URLConnection connection2 = jsonUrl.openConnection();
+            BufferedReader in2 = new BufferedReader(
+                    new InputStreamReader(
+                            connection2.getInputStream()));
+            String inputLine2;
+
+            String jsonText = "";
+            while ((inputLine2 = in2.readLine()) != null) {
+                jsonText += inputLine2;
+            }
+
+            JSONObject json = new JSONObject(jsonText);
+
+            //System.out.println(json);
+
+            return json;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 }
