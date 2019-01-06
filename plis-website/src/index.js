@@ -4,13 +4,24 @@ import './index.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 class QueryResultAttribute extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showingMore: false
+        }
+    }
+
+    onClick() {
+        this.setState({showingMore: !this.state.showingMore});
+    }
+
     render() {
         return(
             <div className="query-result-attribute">
                 <p className="query-result-attribute-name">{this.props.name}</p>
                 <div className="query-result-attribute-value">
-                    <img src="rightarrow.png" alt="" width="20px" height="20px"/>
-                    <p>{this.props.value}</p>
+                    <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/>
+                    <p className={this.state.showingMore ? "" : "shortened-text"}>{this.props.value}</p>
                 </div>
             </div>
         )

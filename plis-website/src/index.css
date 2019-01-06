@@ -146,14 +146,23 @@ p {
   font-size: 18px;
 }
 
-.query-result-attribute-value{
+.query-result-attribute-value {
   display: flex;
-  align-items: center;
   margin: 5px 0;
 }
 
 .query-result-attribute-value p {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.shortened-text {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.query-result-attribute-value img {
+  flex-shrink: 0;
+  margin: 3px;
 }
