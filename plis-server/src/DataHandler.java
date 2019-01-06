@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class DataHandler {
-    static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons;
-    static String kibaAffinities[][];
+    private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons;
+    private static String kibaAffinities[][];
 
     /**
      * Import data from kiba dataset.
@@ -278,8 +278,18 @@ public class DataHandler {
     }
 
     // Get affinity of a protein and a ligand by their ids.
-    private static String getAffinity(String ligandId, String proteinId) {
+    public static String getAffinity(String ligandId, String proteinId) {
         return kibaAffinities[Arrays.asList(kibaLigands.keySet().toArray()).indexOf(ligandId)]
                 [Arrays.asList(kibaProteins.keySet().toArray()).indexOf(proteinId)];
+    }
+
+    // Get a protein's details.
+    public static JSONObject getProtein(String proteinId) {
+        return proteinJsons.getJSONObject(proteinId);
+    }
+
+    // Get a ligand's details.
+    public static JSONObject getLigand(String ligandId) {
+        return ligandJsons.getJSONObject(ligandId);
     }
 }
