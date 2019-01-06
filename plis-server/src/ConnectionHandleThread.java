@@ -21,8 +21,12 @@ public class ConnectionHandleThread extends Thread {
 
         // Get JSONObject.
         String line = "";
+        String newLine;
         try {
-            line = in.readLine();
+            // Skip the metadata. The last line contains the needed data.
+            while ((newLine = in.readLine()) != null) {
+                line = newLine;
+            }
         } catch (IOException e1) {
             System.out.println("Failed to read the line.");
             e1.printStackTrace();
