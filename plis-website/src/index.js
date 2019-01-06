@@ -20,13 +20,12 @@ class ResultsScreen extends React.Component {
             resultsReceived: false
         };
 
-        // Fetch the results.
         fetch("http://localhost:60015", {
             method: "POST",
             body: JSON.stringify({iam: "here"})
          })
             .then(response => response.json())
-            .then(json => this.onResultsReady(json));
+            .then(json => console.log(json));
     }
 
     render() {
