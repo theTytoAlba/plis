@@ -119,6 +119,7 @@ p {
 
 .results-flex {
   display: flex;
+  margin-top: 10px;
 }
 
 .interactions-list {
@@ -129,6 +130,10 @@ p {
   display: flex;
   flex-direction: column;
   width: 300px;
+  border-width: 1px;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 3px 3px 10px 0px grey;
 }
 
 .query-result-attribute {
@@ -138,7 +143,7 @@ p {
 
 .query-result-attribute-name {
   color: blue;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .query-result-attribute-value{
