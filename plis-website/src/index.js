@@ -26,9 +26,9 @@ class ResultsScreen extends React.Component {
                 query: this.props.query,
                 queryType: this.props.queryType
             })
-         })
+        })
             .then(response => response.json())
-            .then(json => console.log(json));
+            .then(json => this.onResultsReady(json));
     }
 
     render() {
