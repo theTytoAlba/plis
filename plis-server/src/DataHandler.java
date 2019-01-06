@@ -346,7 +346,7 @@ public class DataHandler {
 
     // Get a protein's details.
     public static JSONObject getProtein(String proteinId) {
-        return proteinJsons.getJSONObject(proteinId);
+        return simplifyProtein(proteinJsons.getJSONObject(proteinId));
     }
 
     // Get a ligand's details.
@@ -355,7 +355,61 @@ public class DataHandler {
     }
 
     public static JSONArray getInteractions(String id) {
-        System.out.println("Interactions has it? " + kibaInteractions.has(id));
         return kibaInteractions.getJSONArray(id);
+    }
+
+    private static JSONObject simplifyProtein(JSONObject proteinDetail) {
+        try {
+            JSONObject simpleProtein = new JSONObject();
+            // Name of protein.
+            simpleProtein.put("name", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getString("name"));
+            // Id of protein.
+            simpleProtein.put("id", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONArray("accession").get(0));
+            // Gene name
+            simpleProtein.put("gene", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONObject("gene")
+                    .getJSONArray("name")
+                    .getJSONObject(0)
+                    .getString("content"));
+            // Protein
+            simpleProtein.put("protein", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONObject("protein")
+                    .getJSONObject("recommendedName")
+                    .getString("fullName"));
+            // Sequence
+            simpleProtein.put("sequence", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONObject("sequence")
+                    .getString("content"));
+            // Length
+            simpleProtein.put("length", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONObject("sequence")
+                    .getInt("length"));
+            // Organism
+            simpleProtein.put("organism", proteinDetail
+                    .getJSONObject("uniprot")
+                    .getJSONObject("entry")
+                    .getJSONObject("organism")
+                    .getJSONArray("name")
+                    .getJSONObject(0)
+                    .getString("content"));
+            return simpleProtein;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONObject();
+        }
     }
 }

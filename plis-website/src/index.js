@@ -12,6 +12,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 class ResultsScreen extends React.Component {
     onResultsReady(json) {
         this.setState({resultsReceived: true, results: json});
+        console.log(json);
     }
 
     constructor(props) {
