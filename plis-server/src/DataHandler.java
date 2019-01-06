@@ -351,7 +351,7 @@ public class DataHandler {
 
     // Get a ligand's details.
     public static JSONObject getLigand(String ligandId) {
-        return ligandJsons.getJSONObject(ligandId);
+        return simplifyLigand(ligandJsons.getJSONObject(ligandId));
     }
 
     public static JSONArray getInteractions(String id) {
@@ -372,13 +372,20 @@ public class DataHandler {
                     .getJSONObject("entry")
                     .getJSONArray("accession").get(0));
             // Gene name
-            simpleProtein.put("gene", proteinDetail
+            JSONObject geneObject = proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
-                    .getJSONObject("gene")
-                    .getJSONArray("name")
-                    .getJSONObject(0)
-                    .getString("content"));
+                    .getJSONObject("gene");
+            try {
+                simpleProtein.put("gene", geneObject
+                        .getJSONArray("name")
+                        .getJSONObject(0)
+                        .getString("content"));
+            } catch (Exception e) {
+                simpleProtein.put("gene", geneObject
+                        .getJSONObject("name")
+                        .getString("content"));
+            }
             // Protein
             simpleProtein.put("protein", proteinDetail
                     .getJSONObject("uniprot")
@@ -407,6 +414,47 @@ public class DataHandler {
                     .getJSONObject(0)
                     .getString("content"));
             return simpleProtein;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONObject();
+        }
+    }
+
+    private static JSONObject simplifyLigand(JSONObject ligandDetail) {
+        try {
+            JSONObject simpleLigand = new JSONObject();
+            JSONArray sections = ligandDetail
+                    .getJSONObject("Record")
+                    .getJSONArray("Section");
+
+
+            // Traverse sections.
+            for (int i = 0; i < sections.length(); i++) {
+                if (sections.getJSONObject(i).getString("TOCHeading").contains("Names and Identifiers")) {
+                    JSONArray identifierSection = sections.getJSONObject(i).getJSONArray("Section");
+                    for (int j = 0; j < identifierSection.length(); j++) {
+                        // Name of ligand.
+                        if (identifierSection.getJSONObject(j).getString("TOCHeading").contains("Record Title")) {
+                            String name = identifierSection.getJSONObject(j).getJSONArray("Information").getJSONObject(0).getString("StringValue");
+                            simpleLigand.put("name", name);
+                        }
+
+                        // IUPAC, InChI and Smiles
+                        if (identifierSection.getJSONObject(j).getString("TOCHeading").contains("Computed Descriptors")) {
+                            JSONArray chemicalNames = identifierSection.getJSONObject(j).getJSONArray("Section");
+                            JSONObject chemicalNamesObject = new JSONObject();
+
+                            for (int k = 0; k < chemicalNames.length(); k++) {
+                                chemicalNamesObject.put(chemicalNames.getJSONObject(k).getString("TOCHeading"),
+                                        chemicalNames.getJSONObject(k).getJSONArray("Information").getJSONObject(0).getString("StringValue"));
+                            }
+                            simpleLigand.put("chemicalNames", chemicalNamesObject);
+                        }
+                    }
+                }
+            }
+
+            return simpleLigand;
         } catch (Exception e) {
             e.printStackTrace();
             return new JSONObject();
