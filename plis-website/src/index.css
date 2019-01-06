@@ -116,3 +116,11 @@ p {
 .hidden {
   display: none;
 }
+
+.results-flex {
+  display: flex;
+}
+
+.interactions-list {
+  flex-grow: 1;
+}

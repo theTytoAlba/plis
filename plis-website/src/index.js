@@ -4,6 +4,48 @@ import './index.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 /**
+ * The query result
+ */
+class QueryResult extends React.Component {
+    render() {
+        return(
+            <div>
+                query result here.
+            </div>
+        )
+    }
+}
+
+/**
+ * The interactions list
+ */
+class InteractionsList extends React.Component {
+    render() {
+        return(
+            <div className="interactions-list">
+                interactions here.
+            </div>
+        )
+    }
+}
+
+/**
+ * Results are:
+ *   The interactions
+ *   The main result of query
+ */
+class Results extends React.Component {
+    render() {
+        return(
+            <div className="results-flex">
+                <InteractionsList interactions={this.props.results.interactions} />
+                <QueryResult result={this.props.results.result} />
+            </div>
+        )
+    }
+}
+
+/**
  * The results page contains:
  *  Search bar and query type
  *  Result of the query term
@@ -18,7 +60,8 @@ class ResultsScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            resultsReceived: false
+            resultsReceived: false,
+            results: {}
         };
 
         fetch("http://localhost:60015", {
@@ -51,6 +94,7 @@ class ResultsScreen extends React.Component {
                     />
                 </div>
                 <LinearProgress className={`linear-progress-bar ${this.state.resultsReceived ? "hidden" : ""}`}/>
+                <Results results={this.state.results}/>
             </div>
         );
     }
