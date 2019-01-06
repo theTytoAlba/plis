@@ -1,4 +1,5 @@
 import org.json.JSONObject;
+import org.json.XML;
 
 import java.io.*;
 import java.net.URL;
@@ -148,10 +149,10 @@ public class DataHandler {
             e.printStackTrace();
         }
 
-        String ligandsDB = in.nextLine();
-        ligandJsons = new JSONObject(ligandsDB);
+        String proteinXmlDB = in.nextLine();
+        proteinXmls = new JSONObject(proteinXmlDB);
 
-        System.out.println("Imported " + ligandJsons.keySet().size() + " protein xml details from core dataset.");
+        System.out.println("Imported " + proteinXmls.keySet().size() + " protein xml details from core dataset.");
     }
 
     private static void fetchXmlDataForProteins() {
@@ -239,16 +240,40 @@ public class DataHandler {
         }
         return null;
     }
-    
+
     private static void importProteinDetails() {
-        // TODO: Implement
+        System.out.println("Reading the protein details database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/kiba/proteinJsons.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String proteinDB = in.nextLine();
+        proteinJsons = new JSONObject(proteinDB);
+
+        System.out.println("Imported " + proteinJsons.keySet().size() + " protein details from core dataset.");
     }
 
     private static void convertProteinXmlsToJson() {
-        // TODO: Implement
+        System.out.println("Converting fetched data");
+        proteinJsons = new JSONObject("{}");
+        int i = 0;
+        for (String protein : proteinXmls.keySet()) {
+            i++;
+            proteinJsons.put(protein, XML.toJSONObject(proteinXmls.getString(protein)));
+            System.out.println("Finished " + i + "/" + proteinXmls.keySet().size());
+        }
     }
 
     private static void saveProteinJsons() {
-        // TODO: Implement
+        System.out.println("Saving converted data");
+        try (FileWriter file = new FileWriter("files/kiba/proteinJsons.txt")) {
+            file.write(proteinJsons.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
