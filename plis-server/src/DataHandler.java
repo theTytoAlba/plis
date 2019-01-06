@@ -140,27 +140,62 @@ public class DataHandler {
     }
 
     private static void importProteinXmlDetails() {
-        // TODO: Implement
+        System.out.println("Reading the protein xml details database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/kiba/proteinXmls.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String ligandsDB = in.nextLine();
+        ligandJsons = new JSONObject(ligandsDB);
+
+        System.out.println("Imported " + ligandJsons.keySet().size() + " protein xml details from core dataset.");
     }
 
     private static void fetchXmlDataForProteins() {
-        // TODO: Implement
+        int i = 0;
+        proteinXmls = new JSONObject("{}");
+        for (String protein : kibaProteins.keySet()) {
+            i++;
+            System.out.println("Starting for " + protein);
+            String xml = requestProteinXmlByUniprotId(protein);
+            proteinXmls.put(protein, xml);
+            System.out.println("Finished " + i + "/" + kibaProteins.keySet().size());
+        }
+    }
+
+    private static String requestProteinXmlByUniprotId(String uniprotId) {
+        try {
+            URL uniprotUrl = new URL("https://www.uniprot.org/uniprot/" + uniprotId + ".xml");
+            URLConnection connection = uniprotUrl.openConnection();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            connection.getInputStream()));
+            String inputLine;
+            String xml = "";
+
+            while ((inputLine = in.readLine()) != null) {
+                xml += inputLine;
+            }
+            in.close();
+
+            return xml;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 
     private static void saveProteinXmls() {
-        // TODO: Implement
-    }
-
-    private static void importProteinDetails() {
-        // TODO: Implement
-    }
-
-    private static void convertProteinXmlsToJson() {
-        // TODO: Implement
-    }
-
-    private static void saveProteinJsons() {
-        // TODO: Implement
+        System.out.println("Saving fetched data");
+        try (FileWriter file = new FileWriter("/files/kiba/proteinXmls.txt")) {
+            file.write(proteinXmls.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private static JSONObject requestLigandJsonByChemblId(String chemblId) {
@@ -203,5 +238,17 @@ public class DataHandler {
             System.out.println(e);
         }
         return null;
+    }
+    
+    private static void importProteinDetails() {
+        // TODO: Implement
+    }
+
+    private static void convertProteinXmlsToJson() {
+        // TODO: Implement
+    }
+
+    private static void saveProteinJsons() {
+        // TODO: Implement
     }
 }
