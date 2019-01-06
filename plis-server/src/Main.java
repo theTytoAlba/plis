@@ -4,8 +4,10 @@ import java.net.InetSocketAddress;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        // Prepare data.
+        // Import core dataset from kiba files.
         DataHandler.prepareCoreDataset();
+        // Fetch or import details of kiba chemicals.
+        DataHandler.prepareCoreDatasetDetails();
 
         // Create and start server.
         HttpServer server = HttpServer.create(new InetSocketAddress(60015), 0);

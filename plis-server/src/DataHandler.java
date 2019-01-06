@@ -68,4 +68,63 @@ public class DataHandler {
         }
         System.out.println("Imported " + kibaAffinities.length * kibaAffinities[0].length + " kibaAffinities from core dataset.");
     }
+
+    public static void prepareCoreDatasetDetails() {
+        // Check if detail files are already created. If so, import them.
+
+        // Ligand details.
+        File ligandFile = new File("files/kiba/ligandJsons.txt");
+        if (ligandFile.exists()) {
+            importLigandDetails();
+        } else {
+            fetchJsonDataForLigands();
+            saveLigandJsons();
+        }
+
+        // Protein details in xml.
+        File proteinXmlFile = new File("files/kiba/proteinXmls.txt");
+        if (proteinXmlFile.exists()) {
+            importProteinXmlDetails();
+        } else {
+            fetchXmlDataForProteins();
+            saveProteinXmls();
+        }
+
+        // Protein details in json.
+        File proteinFile = new File("files/kiba/proteinJsons.txt");
+        if (proteinFile.exists()) {
+            importProteinDetails();
+        } else {
+            convertProteinXmlsToJson();
+            saveProteinJsons();
+        }
+    }
+
+    private static void importLigandDetails() {
+        // TODO: Implement
+    }
+    private static void fetchJsonDataForLigands() {
+        // TODO: Implement
+    }
+    private static void saveLigandJsons() {
+        // TODO: Implement
+    }
+    private static void importProteinXmlDetails() {
+        // TODO: Implement
+    }
+    private static void fetchXmlDataForProteins() {
+        // TODO: Implement
+    }
+    private static void saveProteinXmls() {
+        // TODO: Implement
+    }
+    private static void importProteinDetails() {
+        // TODO: Implement
+    }
+    private static void convertProteinXmlsToJson() {
+        // TODO: Implement
+    }
+    private static void saveProteinJsons() {
+        // TODO: Implement
+    }
 }
