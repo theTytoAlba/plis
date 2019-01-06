@@ -3,14 +3,35 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+class QueryResultAttribute extends React.Component {
+    render() {
+        return(
+            <div className="query-result-attribute">
+                <p className="query-result-attribute-name">{this.props.name}</p>
+                <div className="query-result-attribute-value">
+                    <img src="rightarrow.png" alt="" width="20px" height="20px"/>
+                    <p>{this.props.value}</p>
+                </div>
+            </div>
+        )
+    }
+}
+
+
 /**
  * The query result
  */
 class QueryResult extends React.Component {
     render() {
+        if (!this.props.result) {
+            return(<div></div>);
+        }
+        
         return(
-            <div>
-                query result here.
+            <div className="query-result">
+                <QueryResultAttribute name="Name" value={this.props.result.name}/>
+                {this.props.queryType === "Ligand" ? Object.keys(this.props.result.chemicalNames).map(
+                    name => <QueryResultAttribute name={name} value={this.props.result.chemicalNames[name]} />) : ""}
             </div>
         )
     }
@@ -39,7 +60,7 @@ class Results extends React.Component {
         return(
             <div className="results-flex">
                 <InteractionsList interactions={this.props.results.interactions} />
-                <QueryResult result={this.props.results.result} />
+                <QueryResult result={this.props.results.result} queryType={this.props.queryType}/>
             </div>
         )
     }
@@ -94,7 +115,7 @@ class ResultsScreen extends React.Component {
                     />
                 </div>
                 <LinearProgress className={`linear-progress-bar ${this.state.resultsReceived ? "hidden" : ""}`}/>
-                <Results results={this.state.results}/>
+                {this.state.resultsReceived ? <Results results={this.state.results} queryType={this.props.queryType}/> : ""}
             </div>
         );
     }

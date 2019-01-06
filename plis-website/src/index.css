@@ -124,3 +124,31 @@ p {
 .interactions-list {
   flex-grow: 1;
 }
+
+.query-result {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.query-result-attribute {
+  display: flex;
+  flex-direction: column;
+}
+
+.query-result-attribute-name {
+  color: blue;
+  font-size: 20px;
+}
+
+.query-result-attribute-value{
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.query-result-attribute-value p {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
