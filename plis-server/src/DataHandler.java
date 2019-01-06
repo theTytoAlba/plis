@@ -4,11 +4,11 @@ import org.json.XML;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class DataHandler {
     static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons;
-    ;
     static String kibaAffinities[][];
 
     /**
@@ -275,5 +275,11 @@ public class DataHandler {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    // Get affinity of a protein and a ligand by their ids.
+    private static String getAffinity(String ligandId, String proteinId) {
+        return kibaAffinities[Arrays.asList(kibaLigands.keySet().toArray()).indexOf(ligandId)]
+                [Arrays.asList(kibaProteins.keySet().toArray()).indexOf(proteinId)];
     }
 }
