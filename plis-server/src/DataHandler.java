@@ -6,12 +6,11 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
 
 public class DataHandler {
     private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons, kibaInteractions,
-            extractionProteins, extractionLigands, extractionAffinities;
+            extractionProteins, extractionLigands, extractionAffinities, alternativeNames = new JSONObject();
     private static String kibaAffinities[][];
 
     /**
@@ -526,6 +525,7 @@ public class DataHandler {
     // Get a protein's details.
     public static JSONObject getProtein(String proteinId) {
         if (proteinJsons.has(proteinId)) {
+            System.out.println(proteinJsons.getJSONObject(proteinId));
             return simplifyProtein(proteinJsons.getJSONObject(proteinId));
         } else if (extractionProteins.has(proteinId)) {
             return simplifyProtein(extractionProteins.getJSONObject(proteinId));
@@ -693,5 +693,79 @@ public class DataHandler {
             e.printStackTrace();
             return new JSONObject();
         }
+    }
+
+    public static void prepareAlternativeNames() {
+        if (importAlternativeNames()) {
+            return;
+        }
+
+        // Synonyms from core protein db.
+        for (String proteinId : proteinJsons.keySet()) {
+            try {
+                alternativeNames.put(simplifyProtein(proteinJsons.getJSONObject(proteinId)).getString("name"), proteinId);
+            } catch (Exception e) {}
+            try {
+            alternativeNames.put(simplifyProtein(proteinJsons.getJSONObject(proteinId)).getJSONObject("details").getString("Protein"), proteinId);
+            } catch (Exception e) {}
+        }
+        // Synonyms from extracted protein db.
+        for (String proteinId : extractionProteins.keySet()) {
+            try {
+                alternativeNames.put(simplifyProtein(extractionProteins.getJSONObject(proteinId)).getString("name"), proteinId);
+            } catch (Exception e) {}
+            try {
+                alternativeNames.put(simplifyProtein(extractionProteins.getJSONObject(proteinId)).getJSONObject("details").getString("Protein"), proteinId);
+            } catch (Exception e) {}
+        }
+        // Synonyms from core ligand db.
+        for (String ligandId : ligandJsons.keySet()) {
+            try {
+                JSONObject ligandDetail = ligandJsons.getJSONObject(ligandId);
+                ligandDetail.put("id", ligandId);
+                alternativeNames.put(simplifyLigand(ligandDetail).getString("name"), ligandId);
+            } catch (Exception e) {e.printStackTrace();}
+        }
+        // Synonyms from extracted ligand db.
+        for (String ligandId : extractionLigands.keySet()) {
+            try {
+                JSONObject ligandDetail = extractionLigands.getJSONObject(ligandId);
+                ligandDetail.put("id", ligandId);
+                alternativeNames.put(simplifyLigand(ligandDetail).getString("name"), ligandId);
+            } catch (Exception e) {e.printStackTrace();}
+        }
+
+        saveAlternativeNames();
+    }
+
+    private static void saveAlternativeNames () {
+        System.out.println("Saving alternative names info");
+        try (FileWriter file = new FileWriter("files/other/alternativeNames.txt")) {
+            file.write(alternativeNames.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private static boolean importAlternativeNames() {
+        System.out.println("Reading the alternative names database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/other/alternativeNames.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        String namesDB = in.nextLine();
+        alternativeNames = new JSONObject(namesDB);
+
+        System.out.println("Imported " + alternativeNames.keySet().size() + " alternative names from core dataset.");
+        return true;
+    }
+
+    public static String getIdFromAlternativeName(String name) {
+        return alternativeNames.has(name) ? alternativeNames.getString(name) : name;
     }
 }

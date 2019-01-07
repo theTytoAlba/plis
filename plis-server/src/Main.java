@@ -10,6 +10,9 @@ public class Main {
         DataHandler.prepareCoreDatasetDetails();
         // Prepare extraction dataset.
         DataHandler.prepareExtractionDataset();
+        // Prepare alternative names.
+        DataHandler.prepareAlternativeNames();
+
         // Create and start server.
         HttpServer server = HttpServer.create(new InetSocketAddress(60015), 0);
         server.createContext("/", new ConnectionHandler());

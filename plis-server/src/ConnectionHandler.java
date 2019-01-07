@@ -23,7 +23,6 @@ public class ConnectionHandler implements HttpHandler {
         h.add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
 
         // Prepare response.
-
         String responseBody;
         try {
             responseBody = handleRequest(new JSONObject(requestBody));
@@ -42,6 +41,9 @@ public class ConnectionHandler implements HttpHandler {
 
     private String handleRequest(JSONObject request) {
         JSONObject result = new JSONObject();
+
+        // Update query to id of element
+        request.put("query", DataHandler.getIdFromAlternativeName(request.getString("query")));
 
         // Check if it is a protein or ligand.
         JSONObject resultObject;
