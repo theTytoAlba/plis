@@ -122,11 +122,13 @@ class ResultsScreen extends React.Component {
             queryType: props.queryType
         };
 
+
+        // New render means new results.
         fetch("http://localhost:60015", {
             method: "POST",
             body: JSON.stringify({
-                query: this.props.query,
-                queryType: this.props.queryType
+                query: this.state.query,
+                queryType: this.state.queryType
             })
         })
             .then(response => response.json())
@@ -135,10 +137,19 @@ class ResultsScreen extends React.Component {
 
     /**
      * Called by search bar.
-     * Notifies parent with new query and query type. 
      */
     handleQuery(newQuery) {
-        this.props.onQueryReady({query: newQuery, queryType: this.state.queryType});
+        this.setState({query: newQuery});
+        // New render means new results.
+        fetch("http://localhost:60015", {
+            method: "POST",
+            body: JSON.stringify({
+                query: newQuery,
+                queryType: this.state.queryType
+            })
+        })
+            .then(response => response.json())
+            .then(json => this.onResultsReady(json));
     }
 
      /**
