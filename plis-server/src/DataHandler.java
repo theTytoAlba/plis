@@ -6,10 +6,12 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class DataHandler {
-    private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons, kibaInteractions;
+    private static JSONObject kibaLigands, kibaProteins, ligandJsons, proteinXmls, proteinJsons, kibaInteractions,
+            extractionProteins, extractionLigands, extractionAffinities;
     private static String kibaAffinities[][];
 
     /**
@@ -279,25 +281,61 @@ public class DataHandler {
 
             String pubchemId = pubchemIdLink.split("/")[4];
 
+            return requestLigandJsonByPubchemId(pubchemId);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    private static JSONObject requestLigandJsonByPubchemId(String pubchemId) {
+        try {
             URL jsonUrl = new URL("https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound/" + pubchemId + "/JSON/");
-            URLConnection connection2 = jsonUrl.openConnection();
-            BufferedReader in2 = new BufferedReader(
+            URLConnection connection = jsonUrl.openConnection();
+            BufferedReader in = new BufferedReader(
                     new InputStreamReader(
-                            connection2.getInputStream()));
-            String inputLine2;
+                            connection.getInputStream()));
+            String inputLine;
 
             String jsonText = "";
-            while ((inputLine2 = in2.readLine()) != null) {
-                jsonText += inputLine2;
+            while ((inputLine = in.readLine()) != null) {
+                jsonText += inputLine;
             }
 
             JSONObject json = new JSONObject(jsonText);
-
-            //System.out.println(json);
-
             return json;
         } catch (Exception e) {
             System.out.println(e);
+        }
+        return null;
+    }
+
+    private static String extractChemblIdFromLigandJson(JSONObject ligandJson) {
+        // The TOCHeading order: Names and Identifiers > Synonyms > Depositor-Supplied Synonyms.
+        JSONArray sections = ligandJson.getJSONObject("Record").getJSONArray("Section");
+        for (int i = 0; i < sections.length(); i++) {
+            JSONObject sectionContent = sections.getJSONObject(i);
+            if (sectionContent.getString("TOCHeading").equals("Names and Identifiers")) {
+                JSONArray identifierSections = sectionContent.getJSONArray("Section");
+                for (int j = 0; j < identifierSections.length(); j++) {
+                    JSONObject identifierSectionContent = identifierSections.getJSONObject(j);
+                    if (identifierSectionContent.getString("TOCHeading").equals("Synonyms")) {
+                        JSONArray synonymSections = identifierSectionContent.getJSONArray("Section");
+                        for (int k = 0; k < synonymSections.length(); k++) {
+                            JSONObject synonymSectionContent = synonymSections.getJSONObject(k);
+                            if (synonymSectionContent.getString("TOCHeading").equals("Depositor-Supplied Synonyms")) {
+                                JSONObject synonymInfo = synonymSectionContent.getJSONArray("Information").getJSONObject(0);
+                                JSONArray synonyms = synonymInfo.getJSONArray("StringValueList");
+                                for (int l = 0; l < synonyms.length(); l++) {
+                                    if (synonyms.getString(l).contains("CHEMBL")) {
+                                        return synonyms.getString(l);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         return null;
     }
@@ -332,6 +370,86 @@ public class DataHandler {
         System.out.println("Saving converted data");
         try (FileWriter file = new FileWriter("files/kiba/proteinJsons.txt")) {
             file.write(proteinJsons.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    /** Process extraction data. */
+    public static void prepareExtractionDataset() {
+        extractionProteins = new JSONObject();
+        extractionLigands = new JSONObject();
+        extractionAffinities = new JSONObject();
+        // Read the paper links from Atakan's file.
+        System.out.println("Reading the extraction database.");
+        Scanner in = null;
+        try {
+            in = new Scanner(new File("files/other/extractions.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Process every line.
+        int i = 0;
+        while (in.hasNextLine()) {
+            // <protein id> <ligand id> <url>
+            String[] tokens = in.nextLine().split("\t");
+
+            // Get protein info if needed.
+            if (!extractionProteins.has(tokens[0])) {
+                JSONObject proteinJSON = XML.toJSONObject(requestProteinXmlByUniprotId(tokens[0]));
+                extractionProteins.put(tokens[0], proteinJSON);
+            }
+
+            // Get ligand info.
+            JSONObject ligandJSON = requestLigandJsonByPubchemId(tokens[1]);
+            String ligandChemblId = extractChemblIdFromLigandJson(ligandJSON);
+            if (ligandChemblId == null) {
+                System.out.println("FAILED FOR " + tokens[1]);
+            }
+            extractionLigands.put(ligandChemblId, ligandJSON);
+
+            // Create a random affinity
+            double affinity = Math.random() * 10 + 10;
+            // Save affinity for protein.
+            if (!extractionAffinities.has(tokens[0])) {
+                extractionAffinities.put(tokens[0], new JSONObject());
+            }
+            JSONObject proteinAffinities = extractionAffinities.getJSONObject(tokens[0]);
+            proteinAffinities.put(ligandChemblId, new JSONObject("{value:" + affinity + ", source:" + tokens[3] + "}"));
+            extractionAffinities.put(tokens[0], proteinAffinities);
+            // Save affinity for ligand
+            if (!extractionAffinities.has(ligandChemblId)) {
+                extractionAffinities.put(ligandChemblId, new JSONObject());
+            }
+            JSONObject ligandAffinities = extractionAffinities.getJSONObject(ligandChemblId);
+            ligandAffinities.put(tokens[0], "{value:" + affinity + ", source:" + tokens[3] + "}");
+            extractionAffinities.put(ligandChemblId, ligandAffinities);
+
+            System.out.println(i++);
+        }
+        saveExtractionJSONS();
+    }
+
+    private static void saveExtractionJSONS() {
+        System.out.println("Saving extraction dataset info");
+        try (FileWriter file = new FileWriter("files/kiba/extractionProteins.txt")) {
+            file.write(extractionProteins.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        try (FileWriter file = new FileWriter("files/kiba/extractionLigands.txt")) {
+            file.write(extractionLigands.toString());
+            System.out.println("Successfully Copied JSON Object to File...");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        try (FileWriter file = new FileWriter("files/kiba/extractionAffinities.txt")) {
+            file.write(extractionAffinities.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (Exception e) {
             System.out.println(e);
