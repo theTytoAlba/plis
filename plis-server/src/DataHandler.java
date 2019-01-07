@@ -378,6 +378,11 @@ public class DataHandler {
 
     /** Process extraction data. */
     public static void prepareExtractionDataset() {
+        // If import is successful, return;
+        if (importExtractionJSONS()) {
+            return;
+        }
+
         extractionProteins = new JSONObject();
         extractionLigands = new JSONObject();
         extractionAffinities = new JSONObject();
@@ -434,26 +439,65 @@ public class DataHandler {
 
     private static void saveExtractionJSONS() {
         System.out.println("Saving extraction dataset info");
-        try (FileWriter file = new FileWriter("files/kiba/extractionProteins.txt")) {
+        try (FileWriter file = new FileWriter("files/other/extractionProteins.txt")) {
             file.write(extractionProteins.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        try (FileWriter file = new FileWriter("files/kiba/extractionLigands.txt")) {
+        try (FileWriter file = new FileWriter("files/other/extractionLigands.txt")) {
             file.write(extractionLigands.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        try (FileWriter file = new FileWriter("files/kiba/extractionAffinities.txt")) {
+        try (FileWriter file = new FileWriter("files/other/extractionAffinities.txt")) {
             file.write(extractionAffinities.toString());
             System.out.println("Successfully Copied JSON Object to File...");
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    public static boolean importExtractionJSONS() {
+        System.out.println("Reading the extraction databases.");
+        Scanner in = null;
+        // Proteins
+        try {
+            in = new Scanner(new File("files/other/extractionProteins.txt"));
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+        String proteinDB = in.nextLine();
+        extractionProteins = new JSONObject(proteinDB);
+
+        System.out.println("Imported " + extractionProteins.keySet().size() + " protein details from extraction dataset.");
+
+        // Ligands
+        try {
+            in = new Scanner(new File("files/other/extractionLigands.txt"));
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+        String ligandDB = in.nextLine();
+        extractionLigands = new JSONObject(ligandDB);
+        System.out.println("Imported " + extractionLigands.keySet().size() + " ligand details from extraction dataset.");
+
+        // Affinities
+        try {
+            in = new Scanner(new File("files/other/extractionAffinities.txt"));
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+        String affinityDB = in.nextLine();
+        extractionAffinities = new JSONObject(affinityDB);
+        System.out.println("Imported " + extractionAffinities.keySet().size() + " affinities from extraction dataset.");
+        return true;
     }
 
     // Get affinity of a protein and a ligand by their ids.
