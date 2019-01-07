@@ -380,10 +380,14 @@ public class DataHandler {
                     .getJSONObject("entry")
                     .getString("name"));
             // Id of protein.
-            simpleProtein.put("id", proteinDetail
+            JSONObject entryObject = proteinDetail
                     .getJSONObject("uniprot")
-                    .getJSONObject("entry")
-                    .getJSONArray("accession").get(0));
+                    .getJSONObject("entry");
+            try {
+                simpleProtein.put("id", entryObject.getJSONArray("accession").get(0));
+            } catch (Exception e) {
+                simpleProtein.put("id", entryObject.getString("accession"));
+            }
 
             JSONObject simpleProteinDetails = new JSONObject();
             // Gene name

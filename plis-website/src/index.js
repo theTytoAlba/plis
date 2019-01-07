@@ -80,7 +80,7 @@ class InteractionsList extends React.Component {
         return(
             <div className="interactions-list">
                 <p className="interactions-title">Interactions</p>
-                {Object.keys(this.props.interactions).map(index => <Interaction interaction={Object.values(this.props.interactions[index])[0]}/>)}
+                {Object.keys(this.props.interactions).map(index => <Interaction interaction={this.props.interactions[index]}/>)}
             </div>
         )
     }
