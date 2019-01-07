@@ -23,9 +23,12 @@ class InteractionAffinity extends React.Component {
 
     render() {
         return(
-            <div className="interaction-affinity">
-                <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/> 
-                <p className="interaction-affinity-value">{this.state.retreival} {this.state.prediction} {this.state.extraction} nanomolar IC50</p>
+            <div className="interaction-affinity-container">
+                <div className="interaction-affinity">
+                    <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/> 
+                    <p className="interaction-affinity-value">{this.state.retreival} {this.state.prediction} {this.state.extraction} nanomolar IC50</p>
+                </div>
+                <p className={this.state.showingMore ? "" : "hidden"}>The source of this value is {this.state.retreival ? "retreival" : (this.state.extraction ? "text mining" : "prediction")}.</p>
             </div>
         );
     }

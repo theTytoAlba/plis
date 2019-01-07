@@ -206,4 +206,10 @@ p {
 .interaction-affinity-value {
   color: blue;
   font-size: 18px;
+  margin-left: 5px;
+}
+
+.interaction-affinity-container {
+  display: flex;
+  flex-direction: column;
 }
