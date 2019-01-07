@@ -141,6 +141,15 @@ class ResultsScreen extends React.Component {
         this.props.onQueryReady({query: newQuery, queryType: this.state.queryType});
     }
 
+     /**
+     * Is called by Protein button or Ligand button.
+     * Only called if an unselected button is clicked.
+     * Updates state.
+     */
+    handleQueryTypeButtonClick(selectedButtonName) {
+        this.setState({queryType: selectedButtonName});
+    }
+
     render() {
         return (
             <div className="results-container">
@@ -149,14 +158,16 @@ class ResultsScreen extends React.Component {
                     <p>Protein Ligand Interaction Search</p>
                 </div>
                 <div className="results-search-and-types-container">
-                    <SearchBar query={this.props.query} onQuery={this.handleQuery.bind(this)}/>
+                    <SearchBar query={this.state.query} onQuery={this.handleQuery.bind(this)}/>
                     <RadioButton 
-                        isSelected={this.props.queryType === "Protein"} 
+                        isSelected={this.state.queryType === "Protein"} 
                         name="Protein" 
+                        onSelect={this.handleQueryTypeButtonClick.bind(this)}
                     />
                     <RadioButton 
-                        isSelected={this.props.queryType === "Ligand"} 
+                        isSelected={this.state.queryType === "Ligand"} 
                         name="Ligand" 
+                        onSelect={this.handleQueryTypeButtonClick.bind(this)}
                     />
                 </div>
                 <LinearProgress className={`linear-progress-bar ${this.state.resultsReceived ? "hidden" : ""}`}/>
