@@ -124,6 +124,7 @@ p {
 
 .interactions-list {
   flex-grow: 1;
+  margin-right: 40px;
 }
 
 .query-result {
@@ -172,4 +173,14 @@ p {
 .interactions-title {
   color: blue;
   font-size: 23px;
+}
+
+.interaction {
+  display: flex;
+  flex-direction: column;
+  border-width: 1px;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 1px 2px 4px 0px #80808094;
+  margin: 10px 0px;
 }

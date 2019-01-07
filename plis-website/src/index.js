@@ -9,7 +9,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 class Interaction extends React.Component {
     render() {        
         return(
-            <div>
+            <div className="interaction">
                 Interaction
             </div>
         )
