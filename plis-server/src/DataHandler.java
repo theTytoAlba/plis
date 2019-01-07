@@ -339,23 +339,34 @@ public class DataHandler {
     }
 
     // Get affinity of a protein and a ligand by their ids.
-    public static String getAffinity(String ligandId, String proteinId) {
+    public static String getKibaAffinity(String ligandId, String proteinId) {
         return kibaAffinities[Arrays.asList(kibaLigands.keySet().toArray()).indexOf(ligandId)]
                 [Arrays.asList(kibaProteins.keySet().toArray()).indexOf(proteinId)];
     }
 
     // Get a protein's details.
     public static JSONObject getProtein(String proteinId) {
-        return simplifyProtein(proteinJsons.getJSONObject(proteinId));
+        if (proteinJsons.has(proteinId)) {
+            return simplifyProtein(proteinJsons.getJSONObject(proteinId));
+        } else {
+            return null;
+        }
     }
 
     // Get a ligand's details.
     public static JSONObject getLigand(String ligandId) {
-        JSONObject ligandDetail = ligandJsons.getJSONObject(ligandId);
-        ligandDetail.put("id", ligandId);
-        return simplifyLigand(ligandDetail);
+        if (ligandJsons.has(ligandId)) {
+            JSONObject ligandDetail = ligandJsons.getJSONObject(ligandId);
+            ligandDetail.put("id", ligandId);
+            return simplifyLigand(ligandDetail);
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Returns a list of ids.
+     */
     public static JSONArray getInteractions(String id) {
         return kibaInteractions.getJSONArray(id);
     }
@@ -373,48 +384,51 @@ public class DataHandler {
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONArray("accession").get(0));
+
+            JSONObject simpleProteinDetails = new JSONObject();
             // Gene name
             JSONObject geneObject = proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONObject("gene");
             try {
-                simpleProtein.put("gene", geneObject
+                simpleProteinDetails.put("Gene", geneObject
                         .getJSONArray("name")
                         .getJSONObject(0)
                         .getString("content"));
             } catch (Exception e) {
-                simpleProtein.put("gene", geneObject
+                simpleProteinDetails.put("Gene", geneObject
                         .getJSONObject("name")
                         .getString("content"));
             }
             // Protein
-            simpleProtein.put("protein", proteinDetail
+            simpleProteinDetails.put("Protein", proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONObject("protein")
                     .getJSONObject("recommendedName")
                     .getString("fullName"));
             // Sequence
-            simpleProtein.put("sequence", proteinDetail
+            simpleProteinDetails.put("Sequence", proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONObject("sequence")
                     .getString("content"));
             // Length
-            simpleProtein.put("length", proteinDetail
+            simpleProteinDetails.put("Length", proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONObject("sequence")
                     .getInt("length"));
             // Organism
-            simpleProtein.put("organism", proteinDetail
+            simpleProteinDetails.put("Organism", proteinDetail
                     .getJSONObject("uniprot")
                     .getJSONObject("entry")
                     .getJSONObject("organism")
                     .getJSONArray("name")
                     .getJSONObject(0)
                     .getString("content"));
+            simpleProtein.put("details", simpleProteinDetails);
             return simpleProtein;
         } catch (Exception e) {
             e.printStackTrace();

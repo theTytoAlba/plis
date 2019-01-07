@@ -8,7 +8,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
  */
 class Interaction extends React.Component {
     render() {        
-        console.log(this.props);
         return(
             <div className="interaction">
                 <div className="interaction-row">
@@ -65,7 +64,9 @@ class QueryResult extends React.Component {
                 <QueryResultAttribute name="Name" value={this.props.result.name}/>
                 <QueryResultAttribute name="Id" value={this.props.result.id}/>
                 {this.props.queryType === "Ligand" ? Object.keys(this.props.result.chemicalNames).map(
-                    name => <QueryResultAttribute name={name} value={this.props.result.chemicalNames[name]} />) : ""}
+                    name => <QueryResultAttribute name={name} value={this.props.result.chemicalNames[name]} />) 
+                    : Object.keys(this.props.result.details).map(
+                        name => <QueryResultAttribute name={name} value={this.props.result.details[name]} />)}
             </div>
         )
     }
@@ -109,7 +110,11 @@ class Results extends React.Component {
  */
 class ResultsScreen extends React.Component {
     onResultsReady(json) {
-        this.setState({resultsReceived: true, results: json});
+        if (Object.keys(json).length !== 0) {
+            this.setState({resultsReceived: true, results: json});
+        } else {
+            this.setState({resultsReceived: true, results: null});
+        }
         console.log(json);
     }
 
@@ -158,7 +163,20 @@ class ResultsScreen extends React.Component {
      * Updates state.
      */
     handleQueryTypeButtonClick(selectedButtonName) {
-        this.setState({queryType: selectedButtonName});
+        this.setState({
+            queryType: selectedButtonName,
+            resultsReceived: false
+        });
+        // New results
+        fetch("http://localhost:60015", {
+            method: "POST",
+            body: JSON.stringify({
+                query: this.state.query,
+                queryType: selectedButtonName
+            })
+        })
+            .then(response => response.json())
+            .then(json => this.onResultsReady(json));
     }
 
     render() {
@@ -182,7 +200,7 @@ class ResultsScreen extends React.Component {
                     />
                 </div>
                 <LinearProgress className={`linear-progress-bar ${this.state.resultsReceived ? "hidden" : ""}`}/>
-                {this.state.resultsReceived ? <Results results={this.state.results} queryType={this.props.queryType}/> : ""}
+                {(this.state.resultsReceived && this.state.results) ? <Results results={this.state.results} queryType={this.state.queryType}/> : ""}
             </div>
         );
     }
