@@ -63,6 +63,7 @@ class QueryResult extends React.Component {
         return(
             <div className="query-result">
                 <QueryResultAttribute name="Name" value={this.props.result.name}/>
+                <QueryResultAttribute name="Id" value={this.props.result.id}/>
                 {this.props.queryType === "Ligand" ? Object.keys(this.props.result.chemicalNames).map(
                     name => <QueryResultAttribute name={name} value={this.props.result.chemicalNames[name]} />) : ""}
             </div>
@@ -116,7 +117,9 @@ class ResultsScreen extends React.Component {
         super(props);
         this.state = {
             resultsReceived: false,
-            results: {}
+            results: {},
+            query: props.query,
+            queryType: props.queryType
         };
 
         fetch("http://localhost:60015", {
@@ -130,6 +133,14 @@ class ResultsScreen extends React.Component {
             .then(json => this.onResultsReady(json));
     }
 
+    /**
+     * Called by search bar.
+     * Notifies parent with new query and query type. 
+     */
+    handleQuery(newQuery) {
+        this.props.onQueryReady({query: newQuery, queryType: this.state.queryType});
+    }
+
     render() {
         return (
             <div className="results-container">
@@ -138,7 +149,7 @@ class ResultsScreen extends React.Component {
                     <p>Protein Ligand Interaction Search</p>
                 </div>
                 <div className="results-search-and-types-container">
-                    <SearchBar query={this.props.query}/>
+                    <SearchBar query={this.props.query} onQuery={this.handleQuery.bind(this)}/>
                     <RadioButton 
                         isSelected={this.props.queryType === "Protein"} 
                         name="Protein" 
@@ -302,7 +313,7 @@ class Plis extends React.Component {
         } else {
             // Query there is a query, go for results page.
             return (
-                <ResultsScreen query={currentQuery} queryType={this.state.queryType}/>
+                <ResultsScreen onQueryReady={this.handleQuery.bind(this)} query={currentQuery} queryType={this.state.queryType}/>
             );
         }
     }
