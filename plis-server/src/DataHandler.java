@@ -429,7 +429,7 @@ public class DataHandler {
                 extractionAffinities.put(ligandChemblId, new JSONObject());
             }
             JSONObject ligandAffinities = extractionAffinities.getJSONObject(ligandChemblId);
-            ligandAffinities.put(tokens[0], "{value:" + affinity + ", source:" + tokens[3] + "}");
+            ligandAffinities.put(tokens[0], new JSONObject("{value:" + affinity + ", source:" + tokens[3] + "}"));
             extractionAffinities.put(ligandChemblId, ligandAffinities);
 
             System.out.println(i++);
@@ -502,14 +502,33 @@ public class DataHandler {
 
     // Get affinity of a protein and a ligand by their ids.
     public static String getKibaAffinity(String ligandId, String proteinId) {
-        return kibaAffinities[Arrays.asList(kibaLigands.keySet().toArray()).indexOf(ligandId)]
-                [Arrays.asList(kibaProteins.keySet().toArray()).indexOf(proteinId)];
+        try {
+            return kibaAffinities[Arrays.asList(kibaLigands.keySet().toArray()).indexOf(ligandId)]
+                    [Arrays.asList(kibaProteins.keySet().toArray()).indexOf(proteinId)];
+        } catch (Exception e) {
+            // If kiba does not have this affinity.
+            return null;
+        }
+    }
+
+    public static JSONObject getExtractionAffinity(String mainId, String interactionId) {
+        try {
+            if (extractionAffinities.has(mainId)) {
+                System.out.println(extractionAffinities.getJSONObject(mainId).getJSONObject(interactionId));
+                return extractionAffinities.getJSONObject(mainId).getJSONObject(interactionId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Get a protein's details.
     public static JSONObject getProtein(String proteinId) {
         if (proteinJsons.has(proteinId)) {
             return simplifyProtein(proteinJsons.getJSONObject(proteinId));
+        } else if (extractionProteins.has(proteinId)) {
+            return simplifyProtein(extractionProteins.getJSONObject(proteinId));
         } else {
             return null;
         }
@@ -521,6 +540,10 @@ public class DataHandler {
             JSONObject ligandDetail = ligandJsons.getJSONObject(ligandId);
             ligandDetail.put("id", ligandId);
             return simplifyLigand(ligandDetail);
+        } else if (extractionLigands.has(ligandId)) {
+            JSONObject ligandDetail = extractionLigands.getJSONObject(ligandId);
+            ligandDetail.put("id", ligandId);
+            return simplifyLigand(ligandDetail);
         } else {
             return null;
         }
@@ -529,8 +552,26 @@ public class DataHandler {
     /**
      * Returns a list of ids.
      */
-    public static JSONArray getInteractions(String id) {
-        return kibaInteractions.getJSONArray(id);
+    public static JSONArray getAllInteractions(String id) {
+        try {
+            // Start with kiba interactions
+            JSONArray allInteractions;
+            if (kibaInteractions.has(id)) {
+                allInteractions = kibaInteractions.getJSONArray(id);
+            } else {
+                allInteractions = new JSONArray();
+            }
+            // Add extraction interactions
+            if (extractionAffinities.has(id)) {
+                for (String interaction : extractionAffinities.getJSONObject(id).keySet()) {
+                    allInteractions.put(interaction);
+                }
+            }
+            return allInteractions;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static JSONObject simplifyProtein(JSONObject proteinDetail) {
@@ -568,12 +609,22 @@ public class DataHandler {
                         .getString("content"));
             }
             // Protein
-            simpleProteinDetails.put("Protein", proteinDetail
-                    .getJSONObject("uniprot")
-                    .getJSONObject("entry")
-                    .getJSONObject("protein")
-                    .getJSONObject("recommendedName")
-                    .getString("fullName"));
+            try {
+                simpleProteinDetails.put("Protein", proteinDetail
+                        .getJSONObject("uniprot")
+                        .getJSONObject("entry")
+                        .getJSONObject("protein")
+                        .getJSONObject("recommendedName")
+                        .getString("fullName"));
+            } catch (Exception e) {
+                simpleProteinDetails.put("Protein", proteinDetail
+                        .getJSONObject("uniprot")
+                        .getJSONObject("entry")
+                        .getJSONObject("protein")
+                        .getJSONObject("recommendedName")
+                        .getJSONObject("fullName")
+                        .getString("content"));
+            }
             // Sequence
             simpleProteinDetails.put("Sequence", proteinDetail
                     .getJSONObject("uniprot")

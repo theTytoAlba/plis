@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 
 public class ConnectionHandler implements HttpHandler {
@@ -24,7 +23,14 @@ public class ConnectionHandler implements HttpHandler {
         h.add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
 
         // Prepare response.
-        String responseBody = handleRequest(new JSONObject(requestBody));
+
+        String responseBody;
+        try {
+            responseBody = handleRequest(new JSONObject(requestBody));
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseBody = "{}";
+        }
 
         // Send the response back.
         t.sendResponseHeaders(200, responseBody.length());
@@ -51,34 +57,61 @@ public class ConnectionHandler implements HttpHandler {
 
         JSONArray resultInteractions = new JSONArray();
         // Add the interaction info.
-        JSONArray interactions = DataHandler.getInteractions(request.getString("query"));
-        System.out.println("Interaction count " + interactions.length());
+        JSONArray interactions = DataHandler.getAllInteractions(request.getString("query"));
         for (int i = 0; i < interactions.length(); i++) {
-            JSONObject interactionObject = new JSONObject();
+            JSONObject interactionObject;
             JSONArray affinities = new JSONArray();
             // If query is protein, interactions will be ligands.
             if (request.getString("queryType").equals("Protein")) {
                 // Info for interaction
                 interactionObject = DataHandler.getLigand(interactions.get(i).toString());
-                // Affinities
-                JSONObject retreivalAffinity = new JSONObject();
-                retreivalAffinity.put("Retreival",
-                        DataHandler.getKibaAffinity(interactions.get(i).toString(), request.getString("query")));
-                System.out.println("Retreival affinity " + retreivalAffinity.toString());
-                affinities.put(retreivalAffinity);
+
+                // Affinities (prediction affinity is added automatically since we have no dataset)
+                // Retreival affinity
+                String retreival;
+                if ((retreival = DataHandler.getKibaAffinity(interactions.get(i).toString(), request.getString("query"))) != null) {
+                    JSONObject retreivalAffinity = new JSONObject();
+                    retreivalAffinity.put("Retreival", retreival);
+                    affinities.put(retreivalAffinity);
+                }
+                // Extraction affinity
+                JSONObject extraction;
+                if ((extraction = DataHandler.getExtractionAffinity(request.getString("query"), interactions.get(i).toString())) != null) {
+                    JSONObject extractionAffinity = new JSONObject();
+                    extractionAffinity.put("Extraction", extraction);
+                    affinities.put(extractionAffinity);
+                }
+                // Auto prediction
+                JSONObject predictionAffinity = new JSONObject();
+                predictionAffinity.put("Prediction", String.valueOf(Math.random()*10 + 10));
+                affinities.put(predictionAffinity);
+
                 interactionObject.put("affinities", affinities);
             } else {
                 // Info for interaction
                 interactionObject = DataHandler.getProtein(interactions.get(i).toString());
                 // Affinities
-                JSONObject retreivalAffinity = new JSONObject();
-                retreivalAffinity.put("Retreival",
-                        DataHandler.getKibaAffinity(request.getString("query"), interactions.get(i).toString()));
-                affinities.put(retreivalAffinity);
-                System.out.println("Retreival affinity " + retreivalAffinity.toString());
+                // Retreival affinity
+                String retreival;
+                if ((retreival = DataHandler.getKibaAffinity(request.getString("query"), interactions.get(i).toString())) != null) {
+                    JSONObject retreivalAffinity = new JSONObject();
+                    retreivalAffinity.put("Retreival", retreival);
+                    affinities.put(retreivalAffinity);
+                }
+                // Extraction affinity
+                JSONObject extraction;
+                if ((extraction = DataHandler.getExtractionAffinity(request.getString("query"), interactions.get(i).toString())) != null) {
+                    JSONObject extractionAffinity = new JSONObject();
+                    extractionAffinity.put("Extraction", extraction);
+                    affinities.put(extractionAffinity);
+                }
+                // Auto prediction
+                JSONObject predictionAffinity = new JSONObject();
+                predictionAffinity.put("Prediction", String.valueOf(Math.random()*10 + 10));
+                affinities.put(predictionAffinity);
+
                 interactionObject.put("affinities", affinities);
             }
-            System.out.println(interactionObject.toString());
             resultInteractions.put(interactionObject);
         }
         result.put("interactions", resultInteractions);
