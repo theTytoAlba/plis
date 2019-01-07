@@ -3,11 +3,39 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+
+
+class InteractionAffinity extends React.Component {
+    constructor(props) {
+        super(props);
+        const {Retreival, Prediction, Extraction} = this.props.affinity;
+        this.state = {
+            showingMore: false,
+            retreival: Retreival,
+            prediction: Prediction,
+            extraction: Extraction
+        }
+    }
+
+    onClick() {
+        this.setState({showingMore: !this.state.showingMore});
+    }
+
+    render() {
+        return(
+            <div className="interaction-affinity">
+                <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/> 
+                <p className="interaction-affinity-value">{this.state.retreival} {this.state.prediction} {this.state.extraction} nanomolar IC50</p>
+            </div>
+        );
+    }
+}
+
 /**
  * Single interaction
  */
 class Interaction extends React.Component {
-    render() {        
+    render() {    
         return(
             <div className="interaction">
                 <div className="interaction-row">
@@ -19,6 +47,7 @@ class Interaction extends React.Component {
                     <p>{this.props.interaction.id}</p>
                 </div>
                 <p className="interaction-attribute-name">Affinity Findings</p>
+                {Object.keys(this.props.interaction.affinities).map(index => <InteractionAffinity affinity={this.props.interaction.affinities[index]} />)}
             </div>
         )
     }

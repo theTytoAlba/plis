@@ -197,3 +197,13 @@ p {
   color: gray;
   margin-right: 10px;
 }
+
+.interaction-affinity {
+  display: flex;
+  align-items: center;
+}
+
+.interaction-affinity-value {
+  color: blue;
+  font-size: 18px;
+}
