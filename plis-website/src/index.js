@@ -3,6 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
+/**
+ * Single interaction
+ */
+class Interaction extends React.Component {
+    render() {        
+        return(
+            <div>
+                Interaction
+            </div>
+        )
+    }
+}
+
 class QueryResultAttribute extends React.Component {
     constructor(props) {
         super(props);
@@ -55,7 +68,9 @@ class InteractionsList extends React.Component {
     render() {
         return(
             <div className="interactions-list">
-                interactions here.
+                <p className="interactions-title">Interactions</p>
+                {Object.keys(this.props.interactions).map(key => <Interaction id={key} details={this.props.interactions[key]}/>)}
+                <Interaction />
             </div>
         )
     }
