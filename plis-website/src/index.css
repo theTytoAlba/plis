@@ -97,6 +97,7 @@ p {
   display: flex;
   align-items: center;
   margin: 10px;
+  flex-shrink: 0;
 }
 
 .results-logo-and-title-container p {
@@ -107,6 +108,7 @@ p {
 .results-search-and-types-container {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .linear-progress-bar {
@@ -183,4 +185,14 @@ p {
   padding: 15px;
   box-shadow: 1px 2px 4px 0px #80808094;
   margin: 10px 0px;
+}
+
+.interaction-row {
+  display: flex;
+}
+
+.interaction-attribute-name {
+  font-weight: 600;
+  color: gray;
+  margin-right: 10px;
 }

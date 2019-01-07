@@ -8,9 +8,18 @@ import LinearProgress from '@material-ui/core/LinearProgress';
  */
 class Interaction extends React.Component {
     render() {        
+        console.log(this.props);
         return(
             <div className="interaction">
-                Interaction
+                <div className="interaction-row">
+                    <p className="interaction-attribute-name">Name:</p>
+                    <p>{this.props.interaction.name}</p>
+                </div>
+                <div className="interaction-row">
+                    <p className="interaction-attribute-name">Id:</p>
+                    <p>{this.props.interaction.id}</p>
+                </div>
+                <p className="interaction-attribute-name">Affinity Findings</p>
             </div>
         )
     }
@@ -69,8 +78,7 @@ class InteractionsList extends React.Component {
         return(
             <div className="interactions-list">
                 <p className="interactions-title">Interactions</p>
-                {Object.keys(this.props.interactions).map(key => <Interaction id={key} details={this.props.interactions[key]}/>)}
-                <Interaction />
+                {Object.keys(this.props.interactions).map(index => <Interaction interaction={Object.values(this.props.interactions[index])[0]}/>)}
             </div>
         )
     }

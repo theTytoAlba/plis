@@ -351,7 +351,9 @@ public class DataHandler {
 
     // Get a ligand's details.
     public static JSONObject getLigand(String ligandId) {
-        return simplifyLigand(ligandJsons.getJSONObject(ligandId));
+        JSONObject ligandDetail = ligandJsons.getJSONObject(ligandId);
+        ligandDetail.put("id", ligandId);
+        return simplifyLigand(ligandDetail);
     }
 
     public static JSONArray getInteractions(String id) {
@@ -423,6 +425,7 @@ public class DataHandler {
     private static JSONObject simplifyLigand(JSONObject ligandDetail) {
         try {
             JSONObject simpleLigand = new JSONObject();
+            simpleLigand.put("id", ligandDetail.getString("id"));
             JSONArray sections = ligandDetail
                     .getJSONObject("Record")
                     .getJSONArray("Section");
