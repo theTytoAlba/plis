@@ -50,6 +50,11 @@ class Interaction extends React.Component {
                 <div className="interaction-row">
                     <p className="interaction-attribute-name">Id:</p>
                     <p>{this.props.interaction.id}</p>
+                    {this.props.url ? 
+                        <a href={this.props.url}>
+                            <img className="linkImage" src="link_icon.png" alt=""/> 
+                        </a>
+                        : ""}
                 </div>
                 <p className="interaction-attribute-name">Affinity Findings</p>
                 {Object.keys(this.props.interaction.affinities).map(index => <InteractionAffinity affinity={this.props.interaction.affinities[index]} />)}
@@ -126,7 +131,14 @@ class InteractionsList extends React.Component {
         return(
             <div className="interactions-list">
                 <p className="interactions-title">Interactions</p>
-                {Object.keys(this.props.interactions).map(index => <Interaction interaction={this.props.interactions[index]}/>)}
+                {Object.keys(this.props.interactions).map(index => 
+                    <Interaction 
+                        interaction={this.props.interactions[index]}
+                        url = {this.props.queryType !== "Ligand" ? 
+                        `https://pubchem.ncbi.nlm.nih.gov/compound/${this.props.interactions[index].id}` :
+                        `https://uniprot.org/uniprot/${this.props.interactions[index].id}`
+                        }
+                    />)}
             </div>
         )
     }
@@ -141,7 +153,7 @@ class Results extends React.Component {
     render() {
         return(
             <div className="results-flex">
-                <InteractionsList interactions={this.props.results.interactions} />
+                <InteractionsList interactions={this.props.results.interactions} queryType={this.props.queryType}/>
                 <QueryResult result={this.props.results.result} queryType={this.props.queryType}/>
             </div>
         )
