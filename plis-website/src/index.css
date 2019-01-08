@@ -213,3 +213,8 @@ p {
   display: flex;
   flex-direction: column;
 }
+
+.linkImage {
+  width: 12px;
+  height: 12px;
+}

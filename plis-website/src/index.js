@@ -26,9 +26,9 @@ class InteractionAffinity extends React.Component {
             <div className="interaction-affinity-container">
                 <div className="interaction-affinity">
                     <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/> 
-                    {this.state.retreival ? <p className="interaction-affinity-value">{this.state.retreival} nanomolar IC50</p> : ""}
-                    {this.state.prediction ? <p className="interaction-affinity-value">{this.state.prediction} nanomolar IC50</p> : ""}
-                    {this.state.extraction ? <p className="interaction-affinity-value">{this.state.extraction.value} nanomolar IC50</p> : ""}
+                    {this.state.retreival ? <p className="interaction-affinity-value">{this.state.retreival} nM IC50</p> : ""}
+                    {this.state.prediction ? <p className="interaction-affinity-value">{this.state.prediction} nM KIBA</p> : ""}
+                    {this.state.extraction ? <p className="interaction-affinity-value">{this.state.extraction.value} nM IC50</p> : ""}
                 </div>
                 <p className={this.state.showingMore ? "" : "hidden"}>The source of this value is {this.state.retreival ? "retreival" : (this.state.extraction ? "text mining" : "prediction")}.</p>
             </div>
@@ -77,6 +77,11 @@ class QueryResultAttribute extends React.Component {
                 <div className="query-result-attribute-value">
                     <img src={this.state.showingMore ? "downarrow.png" : "rightarrow.png"} alt="" width="20px" height="20px" onClick={this.onClick.bind(this)}/>
                     <p className={this.state.showingMore ? "" : "shortened-text"}>{this.props.value}</p>
+                    {this.props.url ? 
+                        <a href={this.props.url}>
+                            <img className="linkImage" src="link_icon.png" alt=""/> 
+                        </a>
+                        : ""}
                 </div>
             </div>
         )
@@ -96,7 +101,14 @@ class QueryResult extends React.Component {
         return(
             <div className="query-result">
                 <QueryResultAttribute name="Name" value={this.props.result.name}/>
-                <QueryResultAttribute name="Id" value={this.props.result.id}/>
+                <QueryResultAttribute 
+                    name="Id" 
+                    value={this.props.result.id}
+                    url = {this.props.queryType === "Ligand" ? 
+                        `https://pubchem.ncbi.nlm.nih.gov/compound/${this.props.result.id}` :
+                        `https://uniprot.org/uniprot/${this.props.result.id}`
+                        }
+                />
                 {this.props.queryType === "Ligand" ? Object.keys(this.props.result.chemicalNames).map(
                     name => <QueryResultAttribute name={name} value={this.props.result.chemicalNames[name]} />) 
                     : Object.keys(this.props.result.details).map(

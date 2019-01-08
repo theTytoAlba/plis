@@ -13,7 +13,7 @@ public class DataHandler {
             extractionProteins, extractionLigands, extractionAffinities, alternativeNames = new JSONObject();
     private static String kibaAffinities[][];
 
-    /**
+    /**o
      * Import data from kiba dataset.
      */
     public static void prepareCoreDataset() {
@@ -421,14 +421,14 @@ public class DataHandler {
                 extractionAffinities.put(tokens[0], new JSONObject());
             }
             JSONObject proteinAffinities = extractionAffinities.getJSONObject(tokens[0]);
-            proteinAffinities.put(ligandChemblId, new JSONObject("{value:" + affinity + ", source:" + tokens[3] + "}"));
+            proteinAffinities.put(ligandChemblId, new JSONObject("{value:" + affinity + ", source:" + tokens[2] + "}"));
             extractionAffinities.put(tokens[0], proteinAffinities);
             // Save affinity for ligand
             if (!extractionAffinities.has(ligandChemblId)) {
                 extractionAffinities.put(ligandChemblId, new JSONObject());
             }
             JSONObject ligandAffinities = extractionAffinities.getJSONObject(ligandChemblId);
-            ligandAffinities.put(tokens[0], new JSONObject("{value:" + affinity + ", source:" + tokens[3] + "}"));
+            ligandAffinities.put(tokens[0], new JSONObject("{value:" + affinity + ", source:" + tokens[2] + "}"));
             extractionAffinities.put(ligandChemblId, ligandAffinities);
 
             System.out.println(i++);
