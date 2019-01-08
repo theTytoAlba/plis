@@ -30,7 +30,15 @@ class InteractionAffinity extends React.Component {
                     {this.state.prediction ? <p className="interaction-affinity-value">{this.state.prediction} nM KIBA</p> : ""}
                     {this.state.extraction ? <p className="interaction-affinity-value">{this.state.extraction.value} nM IC50</p> : ""}
                 </div>
-                <p className={this.state.showingMore ? "" : "hidden"}>The source of this value is {this.state.retreival ? "retreival" : (this.state.extraction ? "text mining" : "prediction")}.</p>
+                <p className={this.state.showingMore ? "horizontal-flex" : "hidden"}>The source of this value is 
+                    {this.state.retreival ? 
+                        (<div className="horizontal-flex">
+                            <p className="marginLeft">retreival</p> 
+                            <a className="marginLeft" href="https://github.com/hkmztrk/DeepDTA/blob/master/data/kiba/kiba_binding_affinity_v2.txt">
+                                <img src="link_icon.png" className="linkImage" alt=""/>
+                            </a>
+                        </div>) 
+                    : (this.state.extraction ? <p className="marginLeft">text mining</p> : <p className="marginLeft">prediction</p>)}.</p>
             </div>
         );
     }

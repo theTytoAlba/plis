@@ -218,3 +218,11 @@ p {
   width: 12px;
   height: 12px;
 }
+
+.horizontal-flex {
+  display: flex;
+}
+
+.marginLeft {
+  margin-left: 5px;
+}
