@@ -38,7 +38,14 @@ class InteractionAffinity extends React.Component {
                                 <img src="link_icon.png" className="linkImage" alt=""/>
                             </a>
                         </div>) 
-                    : (this.state.extraction ? <p className="marginLeft">text mining</p> : <p className="marginLeft">prediction</p>)}.</p>
+                    : (this.state.extraction ? 
+                        (<div className="horizontal-flex">
+                            <p className="marginLeft">text mining</p> 
+                            <a className="marginLeft" href={`https://www.ncbi.nlm.nih.gov/pubmed/?term=${this.state.extraction.source}`}>
+                                <img src="link_icon.png" className="linkImage" alt=""/>
+                            </a>
+                        </div>)
+                    : <p className="marginLeft">prediction</p>)}.</p>
             </div>
         );
     }
